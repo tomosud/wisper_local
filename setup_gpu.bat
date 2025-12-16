@@ -34,14 +34,14 @@ if not exist "python\python.exe" (
 
 echo.
 echo Creating fresh virtual environment...
-if exist venv (
+if exist .venv (
     echo Removing old virtual environment...
-    rmdir /s /q venv
+    rmdir /s /q .venv
 )
-python\python.exe -m venv venv
+python\python.exe -m venv .venv
 
 echo Activating virtual environment...
-call venv\Scripts\activate.bat
+call .venv\Scripts\activate.bat
 
 echo Installing PyTorch with CUDA support...
 pip uninstall torch torchvision torchaudio -y

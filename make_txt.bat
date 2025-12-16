@@ -10,8 +10,8 @@ if "%~1"=="" (
 )
 
 echo Activating virtual environment...
-if exist "venv\Scripts\activate.bat" (
-    call venv\Scripts\activate.bat
+if exist ".venv\Scripts\activate.bat" (
+    call .venv\Scripts\activate.bat
 ) else (
     echo Error: Virtual environment not found. Please run setup_gpu.bat first.
     pause
