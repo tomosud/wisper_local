@@ -9,16 +9,14 @@ if "%~1"=="" (
     exit /b 1
 )
 
-echo Activating virtual environment...
-if exist ".venv\Scripts\activate.bat" (
-    call .venv\Scripts\activate.bat
-) else (
-    echo Error: Virtual environment not found. Please run setup_gpu.bat first.
+echo Checking Python installation...
+if not exist "python\python.exe" (
+    echo Error: Python not found. Please run setup_gpu.bat first.
     pause
     exit /b 1
 )
 
 echo Running transcription tool...
-python whisper_transcriber.py %*
+python\python.exe whisper_transcriber.py %*
 
 pause

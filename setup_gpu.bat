@@ -33,22 +33,12 @@ if not exist "python\python.exe" (
 )
 
 echo.
-echo Creating fresh virtual environment...
-if exist .venv (
-    echo Removing old virtual environment...
-    rmdir /s /q .venv
-)
-python\python.exe -m venv .venv
-
-echo Activating virtual environment...
-call .venv\Scripts\activate.bat
-
 echo Installing PyTorch with CUDA support...
-pip uninstall torch torchvision torchaudio -y
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+python\python.exe -m pip uninstall torch torchvision torchaudio -y
+python\python.exe -m pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
 
 echo Installing other dependencies...
-pip install -r requirements.txt
+python\python.exe -m pip install -r requirements.txt
 
 echo Downloading ffmpeg...
 if exist "ffmpeg.exe" (
