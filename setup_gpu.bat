@@ -1,13 +1,44 @@
 @echo off
 chcp 65001
+cd /d "%~dp0"
 echo Setting up Whisper with GPU support...
 
+REM Check and download Python embedded version if needed
+if not exist "python\python.exe" (
+    echo Downloading Python embedded version...
+    echo This may take a few minutes...
+    curl -L -o python.zip "https://www.python.org/ftp/python/3.12.7/python-3.12.7-embed-amd64.zip"
+    if exist python.zip (
+        echo Extracting Python...
+        mkdir python
+        tar -xf python.zip -C python
+        del python.zip
+
+        echo Setting up pip...
+        curl -L -o get-pip.py "https://bootstrap.pypa.io/get-pip.py"
+        python\python.exe get-pip.py
+        del get-pip.py
+
+        echo Enabling site-packages...
+        echo import site >> python\python312._pth
+
+        echo Python embedded version installed successfully
+    ) else (
+        echo Error: Failed to download Python
+        pause
+        exit /b 1
+    )
+) else (
+    echo Python embedded version already exists
+)
+
+echo.
 echo Creating fresh virtual environment...
 if exist venv (
     echo Removing old virtual environment...
     rmdir /s /q venv
 )
-python -m venv venv
+python\python.exe -m venv venv
 
 echo Activating virtual environment...
 call venv\Scripts\activate.bat
