@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cmd /c \"cd /d c:\\\\work\\\\script\\\\wisper_local && if exist python_nuget.zip \\(echo EXISTS\\) else \\(echo NOT_FOUND\\)\")"
+    ]
+  }
+}

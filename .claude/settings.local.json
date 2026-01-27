@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir /s /b \"c:\\\\work\\\\script\\\\wisper_local\"\")",
+      "Bash(\"c:\\\\work\\\\script\\\\wisper_local\\\\python\\\\python.exe\" -c \"import tkinter; print\\(''OK''\\)\")",
+      "Bash(cmd /c \"dir c:\\\\work\\\\script\\\\wisper_local\\\\python_nuget.zip\")",
+      "Bash(cmd /c \"dir c:\\\\work\\\\script\\\\wisper_local\\\\python_nuget.zip 2>&1\")",
+      "Bash(powershell -Command \"Test-Path ''c:\\\\work\\\\script\\\\wisper_local\\\\python_nuget.zip''\")",
+      "Bash(powershell -Command \"Invoke-WebRequest -Uri ''https://www.nuget.org/api/v2/package/python/3.12.7'' -OutFile ''c:\\\\work\\\\script\\\\wisper_local\\\\python_nuget.zip''\")",
+      "Bash(powershell -Command:*)",
+      "Bash(powershell -ExecutionPolicy Bypass -File:*)"
+    ]
+  }
+}
