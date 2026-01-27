@@ -9,7 +9,7 @@ $soundDir = Join-Path $soundDir ([char]0x30B5 + [char]0x30A6 + [char]0x30F3 + [c
 
 $form = New-Object System.Windows.Forms.Form
 $form.Text = "Whisper"
-$form.Size = New-Object System.Drawing.Size(340, 280)
+$form.Size = New-Object System.Drawing.Size(340, 380)
 $form.StartPosition = "CenterScreen"
 $form.FormBorderStyle = "FixedSingle"
 $form.MaximizeBox = $false
@@ -54,7 +54,7 @@ $btnB.Add_Click({
         $btnB.Enabled = $false
         $quotedArgs = @("`"$transcriber`"")
         foreach ($f in $files) { $quotedArgs += "`"$f`"" }
-        $proc = Start-Process -FilePath $pythonExe -ArgumentList $quotedArgs -WorkingDirectory $scriptDir -NoNewWindow -Wait -PassThru
+        $proc = Start-Process -FilePath $pythonExe -ArgumentList $quotedArgs -WorkingDirectory $scriptDir -Wait -PassThru
         $btnB.Enabled = $true
         $statusLabel.Text = ""
 
@@ -85,24 +85,60 @@ $form.Controls.Add($btnC)
 
 $y += 50
 
-# D
-$btnD = New-Object System.Windows.Forms.Button
-$btnD.Text = "D  Drop File > Transcribe"
-$btnD.Location = New-Object System.Drawing.Point($x, $y)
-$btnD.Size = New-Object System.Drawing.Size($btnWidth, $btnHeight)
-$btnD.Add_Click({
-    Start-Process "explorer.exe" -ArgumentList $scriptDir
+# D - Drop area
+$dropPanel = New-Object System.Windows.Forms.Panel
+$dropPanel.Location = New-Object System.Drawing.Point($x, $y)
+$dropPanel.Size = New-Object System.Drawing.Size($btnWidth, 100)
+$dropPanel.BorderStyle = "FixedSingle"
+$dropPanel.BackColor = [System.Drawing.Color]::FromArgb(240, 240, 240)
+$dropPanel.AllowDrop = $true
+
+$dropLabel = New-Object System.Windows.Forms.Label
+$dropLabel.Text = "D  Drop File Here > Transcribe"
+$dropLabel.TextAlign = "MiddleCenter"
+$dropLabel.Dock = "Fill"
+$dropLabel.Font = New-Object System.Drawing.Font("Yu Gothic UI", 11)
+$dropLabel.ForeColor = [System.Drawing.Color]::FromArgb(100, 100, 100)
+$dropPanel.Controls.Add($dropLabel)
+
+$dropPanel.Add_DragEnter({
+    param($sender, $e)
+    if ($e.Data.GetDataPresent([System.Windows.Forms.DataFormats]::FileDrop)) {
+        $e.Effect = [System.Windows.Forms.DragDropEffects]::Copy
+        $sender.BackColor = [System.Drawing.Color]::FromArgb(200, 220, 255)
+    }
 })
-$form.Controls.Add($btnD)
 
-$y += 48
+$dropPanel.Add_DragLeave({
+    param($sender, $e)
+    $sender.BackColor = [System.Drawing.Color]::FromArgb(240, 240, 240)
+})
 
-# Status
-$statusLabel = New-Object System.Windows.Forms.Label
-$statusLabel.Text = ""
-$statusLabel.ForeColor = [System.Drawing.Color]::Blue
-$statusLabel.Location = New-Object System.Drawing.Point($x, $y)
-$statusLabel.Size = New-Object System.Drawing.Size($btnWidth, 20)
-$form.Controls.Add($statusLabel)
+$dropPanel.Add_DragDrop({
+    param($sender, $e)
+    $sender.BackColor = [System.Drawing.Color]::FromArgb(240, 240, 240)
+    $droppedFiles = $e.Data.GetData([System.Windows.Forms.DataFormats]::FileDrop)
+    if ($droppedFiles.Count -gt 0) {
+        $dropLabel.Text = "Processing..."
+        $dropLabel.ForeColor = [System.Drawing.Color]::Blue
+        $form.Refresh()
+
+        $quotedArgs = @("`"$transcriber`"")
+        foreach ($f in $droppedFiles) { $quotedArgs += "`"$f`"" }
+        $proc = Start-Process -FilePath $pythonExe -ArgumentList $quotedArgs -WorkingDirectory $scriptDir -Wait -PassThru
+
+        $dropLabel.Text = "D  Drop File Here > Transcribe"
+        $dropLabel.ForeColor = [System.Drawing.Color]::FromArgb(100, 100, 100)
+
+        if ($proc.ExitCode -eq 0) {
+            $outputDir = Split-Path -Parent $droppedFiles[0]
+            Start-Process "explorer.exe" -ArgumentList $outputDir
+        } else {
+            [System.Windows.Forms.MessageBox]::Show("Failed", "Error", "OK", "Error")
+        }
+    }
+})
+
+$form.Controls.Add($dropPanel)
 
 [void]$form.ShowDialog()

@@ -8,6 +8,5 @@ if not exist "python\python.exe" (
     exit /b 1
 )
 
-start "" powershell -ExecutionPolicy Bypass -File "%~dp0whisper_ui.ps1"
+start "" powershell -WindowStyle Hidden -ExecutionPolicy Bypass -File "%~dp0whisper_ui.ps1"
 
-pause
